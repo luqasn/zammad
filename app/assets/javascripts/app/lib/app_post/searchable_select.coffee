@@ -12,6 +12,7 @@ class App.SearchableSelect extends Spine.Controller
     'mouseenter .js-back':   'highlightItem'
     'shown.bs.dropdown':     'onDropdownShown'
     'hidden.bs.dropdown':    'onDropdownHidden'
+    'keyup .js-input':       'onKeyUp'
 
   elements:
     '.js-dropdown': 'dropdown'
@@ -119,6 +120,10 @@ class App.SearchableSelect extends Spine.Controller
     @unhighlightCurrentItem()
     $(document).off 'keydown.searchable_select'
     @isOpen = false
+
+  onKeyUp: =>
+    if @input.val().trim() == ''
+      @shadowInput.val('')
 
   toggle: =>
     @currentItem = null
