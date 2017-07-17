@@ -4,7 +4,6 @@ class Observer::Ticket::Article::FillupFromGeneral < ActiveRecord::Observer
   observe 'ticket::_article'
 
   def before_create(record)
-
     # return if we run import mode
     return if Setting.get('import_mode')
 
@@ -22,6 +21,11 @@ class Observer::Ticket::Article::FillupFromGeneral < ActiveRecord::Observer
     return if type['name'] == 'twitter direct-message'
     return if type['name'] == 'facebook feed post'
     return if type['name'] == 'facebook feed comment'
+
+    if type.name == 'web' && !record.ticket.article_count
+        # set article creator to customer_id if this is the first article in the ticket
+        record.created_by_id = record.ticket.customer_id
+    end
 
     return if !record.created_by_id
     user = User.find(record.created_by_id)
